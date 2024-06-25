@@ -11,8 +11,6 @@ NUM_OF_BOMBS=5  # 爆弾個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-
-
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
     オブジェクトが画面内or画面外を判定し，真理値タプルを返す関数
@@ -27,8 +25,6 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 class Score:
-
-
 
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
@@ -169,16 +165,17 @@ def main():
     #bomb = Bomb((255, 0, 0), 10)
     bombs=[Bomb((255, 0, 0), 10)for i in range(NUM_OF_BOMBS)]  # 爆弾リスト生成
     karioki=Score()
+    beams:list[Beam] = list()
     clock = pg.time.Clock()
     tmr = 0
-    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)            
+                #beam = Beam(bird)           
+                beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
 
         for bomb in bombs:
@@ -191,31 +188,31 @@ def main():
                 #bird.change_img(8, screen)
                 time.sleep(5)
                 return 
-        
 
-        if beam!=None:
-            if bomb !=None:
-                if bomb.rct.colliderect(beam.rct):  # 爆弾とビームがぶつかったら処理
-                    bomb=None
-        for i in range(len(bombs)):
-            if beam!=None:
-                if bombs[i].rct.colliderect(beam.rct):
+        for i, bomb in enumerate(bombs):
+            for j, beam in enumerate(beams):
+                if beam.rct.colliderect(bomb.rct):
                     bombs[i]=None
-                    beam=None
+                    beams[j]=None
                     bird.change_img(6, screen)
                     karioki.tokuten+=1
                     
 
+                    pg.display.update()
+            beams=[beam for beam in beams if beam != None]
         bombs=[bomb for bomb in bombs if bomb != None]
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
 
-        if beam is not None:
-            beam.update(screen) 
         for bomb in bombs:
              bomb.update(screen)
         karioki.update(screen)
+        for j, beam in enumerate(beams):
+            if check_bound(beam.rct) != (True, True):
+                del beams[j]
+            else:
+                beam.update(screen)
        
         pg.display.update()
         tmr += 1
