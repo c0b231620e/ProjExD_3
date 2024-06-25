@@ -26,6 +26,23 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+class Score:
+
+
+
+    def __init__(self):
+        self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        self.iro=(0,0,255)
+        self.tokuten=0
+        self.img=self.fonto.render(f"スコア:{self.tokuten}",0,self.iro)
+        self.rct = self.img.get_rect()  # ビーム座標取得
+        self.rct.center=100,HEIGHT-50
+        
+    def update(self,screen: pg.Surface):
+        self.img=self.fonto.render(f"スコア:{self.tokuten}",0,self.iro)
+        screen.blit(self.img,self.rct)
+
+
 
 class Bird:
     """
@@ -151,6 +168,7 @@ def main():
     beam=None
     #bomb = Bomb((255, 0, 0), 10)
     bombs=[Bomb((255, 0, 0), 10)for i in range(NUM_OF_BOMBS)]  # 爆弾リスト生成
+    karioki=Score()
     clock = pg.time.Clock()
     tmr = 0
     
@@ -185,6 +203,9 @@ def main():
                     bombs[i]=None
                     beam=None
                     bird.change_img(6, screen)
+                    karioki.tokuten+=1
+                    
+
         bombs=[bomb for bomb in bombs if bomb != None]
 
         key_lst = pg.key.get_pressed()
@@ -194,6 +215,7 @@ def main():
             beam.update(screen) 
         for bomb in bombs:
              bomb.update(screen)
+        karioki.update(screen)
        
         pg.display.update()
         tmr += 1
