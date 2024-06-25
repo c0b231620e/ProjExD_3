@@ -28,6 +28,7 @@ class Score:
 
     def __init__(self):
         self.fonto = pg.font.SysFont("hgp創英角ﾎﾟｯﾌﾟ体", 30)
+        kazan=0
         self.iro=(0,0,255)
         self.tokuten=0
         self.img=self.fonto.render(f"スコア:{self.tokuten}",0,self.iro)
